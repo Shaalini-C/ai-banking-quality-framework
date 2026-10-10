@@ -1,6 +1,15 @@
 # AI Banking Quality Framework
 
+[![Playwright Tests](https://github.com/Shaalini-C/ai-banking-quality-framework/actions/workflows/playwright.yml/badge.svg)](https://github.com/Shaalini-C/ai-banking-quality-framework/actions/workflows/playwright.yml)
+
 A small, maintainable Playwright Test and TypeScript portfolio project for exercising the public ParaBank demo. It combines browser UI tests with a local static test-quality analyzer. The analyzer is a deterministic source-code tool; despite the project name, it does not use an AI model or external AI service.
+
+## Project Highlights
+
+- Playwright + TypeScript UI automation across Chromium, Firefox, and WebKit.
+- Page Objects encapsulate verified locators and reusable actions.
+- A deterministic static analyzer reports test-quality patterns and heuristic warnings.
+- GitHub Actions runs type checking, analyzer checks, and browser tests on pushes and pull requests.
 
 ## Scope and observed application limitations
 
@@ -42,7 +51,8 @@ Tests use Playwright Test's built-in fixtures and web-first assertions. Page obj
 ├── package.json
 ├── package-lock.json
 ├── playwright.config.ts
-└── tsconfig.json
+├── tsconfig.json
+└── .gitignore
 ```
 
 ## Technologies
@@ -115,7 +125,7 @@ Playwright writes an HTML report to `playwright-report/`. On test failures it re
 
 The GitHub Actions workflow runs on pushes and pull requests targeting `main` or `master`, the branches already listed in the project's workflow scaffold. It uses Node.js 20 and `npm ci`, installs the configured Playwright browsers and Linux dependencies, runs type checking, analyzer tests, analysis, and the full browser test suite, then uploads analyzer reports and Playwright reports/diagnostics even if an earlier step fails.
 
-The workflow has read-only repository-content permissions and does not use secrets, paid services, or privileged shell commands. The current workspace is not a Git repository, so its actual remote or primary branch could not be independently verified here. Confirm or adjust the workflow's branch filters when connecting this project to its remote repository. No remote workflow run has been performed or claimed.
+The workflow has read-only repository-content permissions and does not use secrets, paid services, or privileged shell commands. The project has been pushed to [the GitHub repository](https://github.com/Shaalini-C/ai-banking-quality-framework); its Actions page showed a green status when last checked. The badge above links to the workflow page. The branch filters are defined in `.github/workflows/playwright.yml`; no particular run ID or individual job result is asserted here.
 
 ## Roadmap
 
@@ -124,4 +134,4 @@ The workflow has read-only repository-content permissions and does not use secre
 - Expand analyzer checks only when they can be explained and tested with low false-positive risk.
 - Review CI browser coverage and artifact retention as the suite grows.
 
-AI-powered quality analysis, reporting beyond Playwright's built-in HTML report, real banking integrations, and GitHub publishing are not implemented.
+AI-powered quality analysis, reporting beyond Playwright's built-in HTML report, and real banking integrations are not implemented.
