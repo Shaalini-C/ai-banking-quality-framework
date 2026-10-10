@@ -106,14 +106,17 @@ Run `npm run quality:analyze` to inspect `tests/**/*.spec.ts`. It writes:
 
 The report includes the detected test count and findings with severity, classification, file, line, test title, and a suggested action. The analyzer checks for:
 
-- Empty test bodies and tests without a recognized Playwright `expect` assertion
-- Fixed waits such as `page.waitForTimeout(...)`
-- Potentially fragile XPath, structural, or CSS-class selectors
-- Potentially destructive transfer and payment submissions
-- Open-account submission that changes demo state
-- Generic or missing test descriptions
+- **HIGH, verified — `EMPTY_TEST`:** an empty block-bodied test callback.
+- **MEDIUM, verified — `NO_MEANINGFUL_ASSERTION`:** no recognized direct Playwright `expect(...).to...` matcher in the test body. This is not a judgment that a present assertion is strong.
+- **MEDIUM, verified — `HARDCODED_WAIT`:** a `waitForTimeout(...)` call or a member `setTimeout(...)` call with a numeric second argument.
+- **LOW, heuristic — `FRAGILE_SELECTOR`:** literal `locator(...)` selectors matching the analyzer's XPath, structural, or CSS-class patterns.
+- **HIGH, heuristic — `POTENTIALLY_DESTRUCTIVE_ACTION`:** a `.click()` receiver whose source text matches the current transfer/payment button naming patterns.
+- **MEDIUM, heuristic — `STATE_CHANGING_ACTION`:** a `.submit()` receiver whose source text includes `openAccountPage`.
+- **LOW, heuristic — `UNCLEAR_TEST_DESCRIPTION`:** a missing/dynamic title or a title matching a short list of generic phrases.
 
-Findings labelled **verified** are deterministic source patterns (for example, a literal `waitForTimeout` call or an empty callback), not proof of runtime impact. Findings labelled **heuristic** are potential risks inferred from names or selector forms and can be false positives or miss cases. The analyzer is static source analysis, not genuine AI, a security scanner, a substitute for review, or a runtime test. Quality findings are advisory and do not make the command fail; file, parse, or report-generation errors return a non-zero exit code. Run `npm run quality:test` for analyzer unit tests.
+The isolated examples in `quality-analyzer/fixtures/` show risky source patterns beside safer alternatives; `npm run quality:test` analyzes them as regression cases. They are not Playwright specs and do not interact with ParaBank. Findings include a rule ID, severity, source location, recommendation, and a relevant Playwright documentation link. Financial-action and state-change findings link to general isolation/best-practice guidance; Playwright does not provide documentation specific to these analyzer heuristics.
+
+Findings labelled **verified** mean the analyzer deterministically matched a source pattern, not that runtime impact was proven. Findings labelled **heuristic** are potential risks inferred from names or selector forms and can be false positives or miss cases. For example, the analyzer does not generally detect shared mutable state, broad selectors, or weak assertions, and financial-action matching depends on source naming. The analyzer is static source analysis, not genuine AI, a security scanner, a substitute for review, or a runtime test. Quality findings are advisory and do not make the command fail; file, parse, or report-generation errors return a non-zero exit code.
 
 Generated analyzer reports are ignored by Git but are uploaded by CI as workflow artifacts.
 

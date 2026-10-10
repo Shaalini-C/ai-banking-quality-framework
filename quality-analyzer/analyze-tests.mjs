@@ -17,6 +17,16 @@ const SUPPORTED_ASSERTION_PREFIXES = [
   'toBeOK',
 ];
 
+const RULE_DOCUMENTATION = {
+  EMPTY_TEST: 'https://playwright.dev/docs/writing-tests',
+  NO_MEANINGFUL_ASSERTION: 'https://playwright.dev/docs/test-assertions',
+  HARDCODED_WAIT: 'https://playwright.dev/docs/writing-tests',
+  FRAGILE_SELECTOR: 'https://playwright.dev/docs/locators',
+  POTENTIALLY_DESTRUCTIVE_ACTION: 'https://playwright.dev/docs/best-practices',
+  STATE_CHANGING_ACTION: 'https://playwright.dev/docs/best-practices',
+  UNCLEAR_TEST_DESCRIPTION: 'https://playwright.dev/docs/writing-tests',
+};
+
 function lineAt(sourceFile, node) {
   return sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile))
     .line + 1;
@@ -78,6 +88,8 @@ function isAssertionCall(node) {
 function addFinding(findings, sourceFile, node, details) {
   findings.push({
     ...details,
+    ruleId: details.code,
+    documentation: RULE_DOCUMENTATION[details.code],
     file: path.relative(PROJECT_ROOT, sourceFile.fileName).split(path.sep).join('/'),
     line: lineAt(sourceFile, node),
   });
@@ -301,13 +313,13 @@ export function markdownReport(report) {
   }
 
   lines.push(
-    '| Severity | Classification | Finding | Test | Location | Recommendation |',
-    '|---|---|---|---|---|---|',
+    '| Severity | Classification | Rule | Finding | Test | Location | Recommendation | Documentation |',
+    '|---|---|---|---|---|---|---|---|',
   );
   for (const finding of report.findings) {
     const escapeCell = (value) => String(value ?? '').replaceAll('|', '\\|');
     lines.push(
-      `| ${finding.severity} | ${finding.classification} | ${escapeCell(finding.code)}: ${escapeCell(finding.message)} | ${escapeCell(finding.testTitle)} | ${finding.file}:${finding.line} | ${escapeCell(finding.recommendation)} |`,
+      `| ${finding.severity} | ${finding.classification} | ${escapeCell(finding.ruleId)} | ${escapeCell(finding.message)} | ${escapeCell(finding.testTitle)} | ${finding.file}:${finding.line} | ${escapeCell(finding.recommendation)} | [Playwright docs](${finding.documentation}) |`,
     );
   }
   lines.push('');
