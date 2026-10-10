@@ -1,0 +1,22 @@
+{
+  "name": "ai-banking-quality-framework",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "quality:analyze": "node quality-analyzer/analyze-tests.mjs",
+    "quality:test": "node --test quality-analyzer/analyzer.test.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^26.6.5",
+    "typescript": "^5.9.3"
+  }
+}
